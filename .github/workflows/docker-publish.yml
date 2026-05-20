@@ -4,7 +4,11 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '0 0 * * 1'  # Rebuild every Monday to pick up latest Bun releases
+    - cron: '0 0 * * 1'  # Rebuild every Monday to pick up latest Bun and Git releases
+
+# Required for creating GitHub Releases
+permissions:
+  contents: write
 
 jobs:
   push:
@@ -12,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get Bun version from Docker Hub registry
+      - name: Get latest Bun version from Docker Hub
         run: |
           # Fetch tag list, filter x.x.x-alpine format, strip -alpine suffix
           BUN_VERSION=$(curl -s "https://hub.docker.com/v2/repositories/oven/bun/tags/?page_size=50" \
@@ -45,5 +49,24 @@ jobs:
 
       - name: Verify image
         run: |
+          # Verify both tools are available and capture versions
           docker run --rm vimcaw/bun-git bun --version
-          docker run --rm vimcaw/bun-git git --version
+          GIT_VERSION=$(docker run --rm vimcaw/bun-git git --version | sed 's/git version //')
+          echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Tag name uses full Bun version, e.g. bun1.1.38
+          # Re-publishing the same version will overwrite the existing release
+          tag_name: bun${{ env.BUN_VERSION }}
+          name: bun ${{ env.BUN_VERSION }}
+          body: |
+            ## Bun ${{ env.BUN_VERSION }}
+
+            | Package | Version |
+            |---------|---------|
+            | bun | ${{ env.BUN_VERSION }} |
+            | git | ${{ env.GIT_VERSION }} |
+
+            **Docker Hub:** https://hub.docker.com/r/vimcaw/bun-git/tags?name=bun${{ env.BUN_VERSION }}-alpine
