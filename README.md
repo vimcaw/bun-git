@@ -14,15 +14,15 @@ keeping the final image as small as possible (~50MB).
 ## Usage
 
 ```bash
-docker pull yourname/bun-git:latest
+docker pull vimcaw/bun-git:latest
 ```
 
 ```bash
 # Run a Bun script
-docker run --rm -v $(pwd):/app yourname/bun-git bun run index.ts
+docker run --rm -v $(pwd):/app vimcaw/bun-git bun run index.ts
 
 # Use in your own Dockerfile
-FROM yourname/bun-git:latest
+FROM vimcaw/bun-git:latest
 
 WORKDIR /app
 COPY . .
@@ -42,13 +42,13 @@ Tags are generated automatically based on the actual Bun version bundled in the 
 
 ```bash
 # Pin to a specific version (recommended for production)
-docker pull yourname/bun-git:bun1.1.38-alpine
+docker pull vimcaw/bun-git:bun1.1.38-alpine
 
 # Track latest v1.x (safe from major version breaking changes)
-docker pull yourname/bun-git:bun1-alpine
+docker pull vimcaw/bun-git:bun1-alpine
 
 # Always use the latest
-docker pull yourname/bun-git:latest
+docker pull vimcaw/bun-git:latest
 ```
 
 ## Auto Updates
@@ -57,7 +57,7 @@ This image is **rebuilt automatically every week** via GitHub Actions to pick up
 the latest Bun releases and security patches from the base image.
 
 You can always find the latest build status in the
-[Actions tab](https://github.com/yourname/bun-git/actions).
+[Actions tab](https://github.com/vimcaw/bun-git/actions).
 
 ## What's Included
 
