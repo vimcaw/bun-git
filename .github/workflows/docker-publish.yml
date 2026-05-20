@@ -44,8 +44,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             vimcaw/bun-git:latest
-            vimcaw/bun-git:bun${{ env.BUN_MAJOR_VERSION }}-alpine
-            vimcaw/bun-git:bun${{ env.BUN_VERSION }}-alpine
+            vimcaw/bun-git:bun-${{ env.BUN_MAJOR_VERSION }}-alpine
+            vimcaw/bun-git:bun-${{ env.BUN_VERSION }}-alpine
 
       - name: Verify image
         run: |
@@ -59,8 +59,8 @@ jobs:
         with:
           # Tag name uses full Bun version, e.g. bun1.1.38
           # Re-publishing the same version will overwrite the existing release
-          tag_name: bun${{ env.BUN_VERSION }}
-          name: bun ${{ env.BUN_VERSION }}
+          tag_name: bun-${{ env.BUN_VERSION }}
+          name: Bun ${{ env.BUN_VERSION }}
           body: |
             ## Bun ${{ env.BUN_VERSION }}
 
@@ -69,4 +69,4 @@ jobs:
             | bun | ${{ env.BUN_VERSION }} |
             | git | ${{ env.GIT_VERSION }} |
 
-            **Docker Hub:** https://hub.docker.com/r/vimcaw/bun-git/tags?name=bun${{ env.BUN_VERSION }}-alpine
+            **Docker Hub:** https://hub.docker.com/r/vimcaw/bun-git/tags?name=bun-${{ env.BUN_VERSION }}-alpine

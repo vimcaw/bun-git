@@ -42,10 +42,10 @@ Tags are generated automatically based on the actual Bun version bundled in the 
 
 ```bash
 # Pin to a specific version (recommended for production)
-docker pull vimcaw/bun-git:bun1.1.38-alpine
+docker pull vimcaw/bun-git:bun-1.3.14-alpine
 
 # Track latest v1.x (safe from major version breaking changes)
-docker pull vimcaw/bun-git:bun1-alpine
+docker pull vimcaw/bun-git:bun-1-alpine
 
 # Always use the latest
 docker pull vimcaw/bun-git:latest
