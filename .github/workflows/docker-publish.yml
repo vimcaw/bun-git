@@ -15,8 +15,16 @@ jobs:
       - name: Get Bun version from Docker Hub registry
         run: |
           TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:oven/bun:pull" | jq -r '.token')
-          CONFIG_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" "https://registry-1.docker.io/v2/oven/bun/manifests/alpine" | jq -r '.config.digest')
+          
+          # oven/bun:alpine is multi-platform, get amd64 manifest digest first
+          AMD64_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" "https://registry-1.docker.io/v2/oven/bun/manifests/alpine" | jq -r '.manifests[] | select(.platform.architecture == "amd64") | .digest')
+          
+          # Get config digest from amd64 manifest
+          CONFIG_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" "https://registry-1.docker.io/v2/oven/bun/manifests/$AMD64_DIGEST" | jq -r '.config.digest')
+          
+          # Get BUN_VERSION from image config
           BUN_VERSION=$(curl -s -H "Authorization: Bearer $TOKEN" "https://registry-1.docker.io/v2/oven/bun/blobs/$CONFIG_DIGEST" | jq -r '.config.Env[] | select(startswith("BUN_VERSION=")) | split("=")[1]')
+          
           BUN_MAJOR_VERSION=$(echo $BUN_VERSION | cut -d. -f1)
           echo "BUN_VERSION=$BUN_VERSION" >> $GITHUB_ENV
           echo "BUN_MAJOR_VERSION=$BUN_MAJOR_VERSION" >> $GITHUB_ENV
